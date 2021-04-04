@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/styles/base.module.css"],"names":[],"mappings":"AAAA,uBACE,WACF,CAEA,uBACE,oBAAa,CAAb,YAAa,CACb,YAAa,CACb,cACF","file":"movies-page.c0670c97.chunk.css","sourcesContent":[".inputForm {\r\n  margin: 20px;\r\n}\r\n\r\n.PageDetal {\r\n  display: flex;\r\n  padding: 10px;\r\n  cursor: pointer;\r\n}\r\n"]}
