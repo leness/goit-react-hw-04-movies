@@ -1,0 +1,15 @@
+.NavLink {
+  font-size: 20px;
+  color: currentColor;
+  margin-right: 20px;
+  text-decoration: none;
+}
+
+.NavLink__active {
+  color: palevioletred;
+}
+
+.nav {
+  display: flex;
+  list-style: none;
+}
