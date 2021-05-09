@@ -1,8 +1,6 @@
 import { Component } from "react"
-import axios from "axios";
-import { Link } from 'react-router-dom'
-import routes from '../routes'
-
+import FetchApi from '../services/api'
+import MovieList from '../components/MoviesList'
 
  
 export default class HomePage extends Component {
@@ -10,35 +8,24 @@ export default class HomePage extends Component {
         results: [],
     };
 
-    async componentDidMount() {
-        const response = await axios.get('https://api.themoviedb.org/3/trending/movie/day?api_key=681186281f0908c0103f6be4e5dcc22b')
-        console.log(response.data);
 
-        this.setState({ results: response.data.results });
-
-    }
+componentDidMount() {
+    FetchApi.getTrendingMovie()
+      .then(movie => {
+        this.setState({ results: [...movie] });
+      })
+      .catch(error => console.log(error));
+  }
 
     
     render() {
         const { results } = this.state;
-        const { location } = this.props;
-        // console.log(this.props.match.url);
+        
         return (
             <>
                 <h1>Trending today</h1>
 
-                <ul>
-                    {results.map(({ title, id }) => <li key={id}>
-                        <Link
-              to={{
-                pathname: `${routes.movies}/${id}`,
-                state: {from: location},
-              }}
-            >
-              {title}
-            </Link>
-                    </li>)}
-                </ul>
+                <MovieList movies={results}/>
             </>
         )
     }

@@ -1,36 +1,56 @@
 
-import axios from "axios"
 import { Component } from "react"
+import FetchApi from '../../services/api'
+import PropTypes from 'prop-types';
 
+class Cast extends Component {
+  state = {
+    casts: [],
+  };
 
-export default class Cast extends Component {
-   
-    state = {
-        cast: [],
-    }
+  componentDidMount() {
+    const { movieId } = this.props.match.params;
 
+    FetchApi.getMovieCast(movieId)
+      .then(cast => {
+        this.setState({ casts: [...cast] });
+      })
+      .catch(error => console.log(error));
+  }
 
-    async componentDidMount() {
-        const { movieId } = this.props.match.params;
-        const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=681186281f0908c0103f6be4e5dcc22b`);
-      
-        this.setState({ cast: [...response.data.cast] })
-    }
+  render() {
+    const { casts } = this.state;
 
-
-    render() {
-        const { cast } = this.state;
-        return (
-        
-                <ul>
-                    {cast.map(({ id, name, profile_path, character, original_name }) => (
-                        <li key={id}>
-                          <img src={`https://image.tmdb.org/t/p/w200/${profile_path}`} alt={name} />
-                            <p>{character} - {original_name}</p>
-                            
-                     </li>
-                    )  )}
-                </ul>
-       )
-    }
+    return casts.length > 0 ? (
+      <ul>
+        {casts.map(({ id, name, profile_path, character }) => {
+          return (
+            <li key={id}>
+              <img
+                src={`https://image.tmdb.org/t/p/w200/${profile_path}`}
+                alt=""
+              />
+              <h2>{name}</h2>
+              <p>{character}</p>
+            </li>
+          );
+        })}
+      </ul>
+    ) : (
+      <h2>Not information</h2>
+    );
+  }
 }
+
+Cast.propTypes = {
+  casts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      character: PropTypes.string.isRequired,
+      profile_path: PropTypes.string.isRequired,
+    }),
+  ),
+};
+
+export default Cast;

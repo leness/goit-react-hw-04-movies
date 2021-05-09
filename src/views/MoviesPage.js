@@ -1,33 +1,33 @@
-
-import axios from "axios";
 import { Component } from "react";
 import MovieList from '../components/MoviesList'
 import s from '../styles/base.module.css'
-
+import FetchApi from '../services/api'
 
 export default class MoviesPage extends Component {
 
     state = {
         query: '',
         movies: [],
+        loading: false,
         error: null,
     };
 
     componentDidMount() {
         if (this.props.location.search) {
-            this.searchMovie(this.props.location.search)
+            this.searchMovie(this.props.location.search.slice(7))
         }
     }
 
-    searchMovie = query => {
-        return axios
-            .get(`https://api.themoviedb.org/3/search/movie?api_key=681186281f0908c0103f6be4e5dcc22b&query=${query}`)
-            .then(response => {
-                this.setState({ movies: response.data.results })
-            })
 
-            .catch(error => this.setState({ error }))
-    };
+    searchMovie = query => {
+    this.setState({ loading: true });
+    FetchApi
+      .fetchShowSearch(query)
+      .then(movies => this.setState({ movies }))
+      .catch(error => this.setState({ error }))
+      .finally(() => this.setState({ loading: false }));
+  };
+
     
 
     handleChange = e => {
@@ -39,6 +39,7 @@ export default class MoviesPage extends Component {
         const { query } = this.state;
 
         e.preventDefault();
+
 
         this.searchMovie(query);
         history.push({ ...location, search: `query=${query}` });
@@ -72,3 +73,4 @@ export default class MoviesPage extends Component {
         )
     }
 }
+

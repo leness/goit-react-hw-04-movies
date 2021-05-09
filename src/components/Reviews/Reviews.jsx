@@ -1,28 +1,51 @@
 import { Component } from "react";
-import axios from "axios"
+import FetchApi from '../../services/api'
+import PropTypes from 'prop-types';
 
-export default class Reviews extends Component {
+class Reviews extends Component {
+  state = {
+    review: [],
+  };
 
-    state = {
-        reviews: [],
-    }
+  componentDidMount() {
+    const { movieId } = this.props.match.params;
 
+    FetchApi.getMovieRewiews(movieId)
+      .then(rewiew => {
+        this.setState({ review: [...rewiew] });
+      })
+      .catch(error => console.log(error));
+  }
 
-     async componentDidMount() {
-        const { movieId } = this.props.match.params;
-        const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/reviews?api_key=681186281f0908c0103f6be4e5dcc22b`);
-      
-        this.setState({ reviews: [...response.data.results] })
-    }
-    render() {
-        const { reviews } = this.state;
-        return (
-            <ul>
-                {reviews.map(({ id, author, content }) => (<li key={id}>
-                    <p>{author}</p>
-                    <p>{content}</p>
-                </li>))}
-            </ul>
-        )
-    }
+  render() {
+    const { review } = this.state;
+
+    return review.length > 0 ? (
+      <ul>
+        {review.map(({ id, author, content }) => {
+          return (
+            <li key={id}>
+              <h3>Author: {author}</h3>
+              <p>{content}</p>
+            </li>
+          );
+        })}
+      </ul>
+    ) : (
+      <h2>Not information</h2>
+    );
+  }
 }
+
+Reviews.propTypes = {
+  review: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      author: PropTypes.string.isRequired,
+      content: PropTypes.string.isRequired,
+    }),
+  ),
+};
+
+export default Reviews;
+
